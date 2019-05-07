@@ -54,12 +54,19 @@ def intent_received(hermes, intent_message):
 		print(sentence)
 
 		# hermes.publish_continue_session(intent_message.session_id, sentence, ["Joseph:greetings"])
-		hermes.publish_end_session(intent_message.session_id, sentence)
+		say(sentence)
 
 	elif intent_message.intent.intent_name == 'Joseph:greetings':
 
 		hermes.publish_end_session(intent_message.session_id, "De rien!")
 
-
+def say(text):
+	mqttClient.publish('hermes/dialogueManager/startSession', json.dumps({
+		'init': {
+			'type': 'notification',
+			'text': text
+		}
+	}))
+		
 with Hermes(MQTT_ADDR) as h:
 	h.subscribe_intents(intent_received).start()
