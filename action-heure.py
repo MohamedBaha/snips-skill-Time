@@ -43,7 +43,7 @@ def intent_received(hermes, intent_message):
 	print(intent_message.intent.intent_name)
 	print ()
 
-	if intent_message.intent.intent_name == 'Joseph:askTime':
+	if intent_message.intent.intent_name == 'GabOrange:askTime':
 
 		sentence = 'Il est '
 		print(intent_message.intent.intent_name)
@@ -56,10 +56,23 @@ def intent_received(hermes, intent_message):
 		# hermes.publish_continue_session(intent_message.session_id, sentence, ["Joseph:greetings"])
 		hermes.publish_end_session(intent_message.session_id, sentence)
 
-	elif intent_message.intent.intent_name == 'Joseph:greetings':
-
-		hermes.publish_end_session(intent_message.session_id, "De rien!")
-
+	elif intent_message.intent.intent_name == 'GabOrange:StartTimer':
+		now = datetime.now(timezone('Europe/Paris'))
+		
+		if intent_message.intent.intent_name == 'GabOrange:SuiviTimer':
+			
+			delta=datetime.now(timezone('Europe/Paris'))
+			seconds=delta.seconds
+			hours=verbalise_hour(seconds//3600)
+			minutes=verbalise_minute(seconds//60)
+			
+			if hours == 0:
+				sentence= 'Il est passé' + munites
+			else:
+				sentence= 'Il est passé ' + hours + minutes	
+			 
+			hermes.publish_end_session(intent_message.session_id, sentence)		
+		
 
 with Hermes(MQTT_ADDR) as h:
 	h.subscribe_intents(intent_received).start()
